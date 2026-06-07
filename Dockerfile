@@ -44,7 +44,7 @@ RUN --mount=type=cache,target=/deps-downloads \
     make build_deps DEP_DOWNLOAD_DIR=/deps-downloads
 
 # Build PrusaSlicer itself using the Makefile
-RUN make build_app
+RUN make build_app && make install DESTDIR=/app/build/install
 
 # ==============================================================================
 # Runner Stage

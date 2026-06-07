@@ -16,7 +16,7 @@ NPROC = $(shell nproc)
 # Number of parallel linker jobs to limit memory usage
 LINK_JOBS = 1
 
-.PHONY: all install_deps build_deps build_app clean
+.PHONY: all install_deps build_deps build_app install clean
 
 all: build_deps build_app
 
@@ -72,7 +72,11 @@ build_app:
 			-DCMAKE_INSTALL_PREFIX=/usr \
 			-DCMAKE_PREFIX_PATH=$(DEPS_BUILD_DIR)/destdir/usr/local
 	ninja -C $(APP_BUILD_DIR) -j$$(( $(NPROC) / 2 ))
-	DESTDIR=$(INSTALL_DIR) ninja -C $(APP_BUILD_DIR) install
+
+install:
+	mkdir -p $(DESTDIR)/usr/bin
+	install -m 755 $(APP_BUILD_DIR)/src/prusa-slicer $(DESTDIR)/usr/bin/prusa-slicer
+	ln -sf prusa-slicer $(DESTDIR)/usr/bin/prusa-gcodeviewer
 
 clean:
 	rm -rf $(DEPS_BUILD_DIR) $(APP_BUILD_DIR) $(INSTALL_DIR)
